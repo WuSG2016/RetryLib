@@ -14,6 +14,11 @@ public class Test {
         instance.setUploadClass(ClassA.class);
         boolean isok=instance.addRequest(new MachineInfo(new HashMap(2)));
         System.out.println(isok);
-
+        instance.addRequest("dda1");
+        instance.addRequest("dda2");
+        instance.addRequest("dda3");
+        instance.addRequest("dda4");
+        instance.addRequest("dda5");
+        instance.addRequest("dda6");
     }
 }

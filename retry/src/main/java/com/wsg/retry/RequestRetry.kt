@@ -12,6 +12,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import android.content.IntentFilter
+import android.util.Log
 
 
 /**
@@ -25,9 +26,11 @@ class RequestRetry private constructor() : INetworkListener {
     override fun onNetworkState(state: Int) {
         when (state) {
             NetworkBroadcastReceiver.NETWORK_NONE -> {
+                Log.e("onNetworkState", "网络已断开")
                 stop()
             }
             else -> {
+                Log.e("onNetworkState", "网络已连接")
                 start()
             }
         }
@@ -75,6 +78,8 @@ class RequestRetry private constructor() : INetworkListener {
         filter.addAction(NetworkBroadcastReceiver.NETWORK_ACTION)
         networkBroadcastReceiver = NetworkBroadcastReceiver()
         NetworkBroadcastReceiver.listener = this
+        this.isTerminate = NetworkBroadcastReceiver.getNetworkState(context) == NetworkBroadcastReceiver.NETWORK_NONE
+        Log.e("Retry", "当前状态网络状态 ${!isTerminate}")
         context.registerReceiver(networkBroadcastReceiver, filter)
     }
 
@@ -119,11 +124,11 @@ class RequestRetry private constructor() : INetworkListener {
 
 
     private fun stop() {
-        this.isTerminate = false
+        this.isTerminate = true
     }
 
     private fun start() {
-        this.isTerminate = true
+        this.isTerminate = false
     }
 
     private fun configInit() {
