@@ -6,6 +6,8 @@ import com.wsg.retry.Repetition;
 import com.wsg.retry.RetryBean;
 import com.wsg.retry.UploadClass;
 
+import java.net.SocketTimeoutException;
+
 @UploadClass
 public class ClassA {
     @ClassBean(BeanClass = "MachineInfo")
@@ -14,7 +16,10 @@ public class ClassA {
     }
 
     @ClassBean(BeanClass = "String")
-    public void uploadmachine(RetryBean<String> retryBean) {
+    public void uploadmachine(RetryBean<String> retryBean) throws SocketTimeoutException {
+        if(retryBean.getT().equals("dda4")){
+            throw new SocketTimeoutException("dd");
+        }
         Log.e("uploadmachine: ", "上传机器状态" + retryBean.getT());
     }
 }

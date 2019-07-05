@@ -11,10 +11,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val instance = RequestRetry.instance
+        /**
+         * 设置上传的类 必须包含UploadClass注解
+         */
         instance.setUploadClass(ClassA::class.java)
+        /**
+         * 注册广播
+         */
         instance.registerNetworkReceiver(this)
-        val isok = instance.addRequest<Any>(MachineInfo(HashMap(2)))
-        println(isok)
+        /**
+         * 添加消息
+         */
+        instance.addRequest<Any>(MachineInfo(HashMap(2)))
+
         instance.addRequest<Any>("dda1")
         instance.addRequest<Any>("dda2")
         instance.addRequest<Any>("dda3")

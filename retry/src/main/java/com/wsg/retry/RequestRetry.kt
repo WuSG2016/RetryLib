@@ -13,6 +13,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import android.content.IntentFilter
 import android.util.Log
+import javax.security.auth.login.LoginException
 
 
 /**
@@ -56,6 +57,11 @@ class RequestRetry private constructor() : INetworkListener {
 
     var kClassInstance: Any? = null
     private var networkBroadcastReceiver: NetworkBroadcastReceiver? = null
+    /**
+     * 默认重试异常
+     */
+    var retryIfException: RetryIfException<*, *> = DefaultRetryIfException()
+
     /**
      * 上传类型类
      */
@@ -111,6 +117,7 @@ class RequestRetry private constructor() : INetworkListener {
     }
 
     fun addRetryBean(retryBean: RetryBean<*>) {
+        Log.e("Retry", "继续添加到队列中")
         this.queue.offer(retryBean)
     }
 
@@ -173,6 +180,7 @@ class RequestRetry private constructor() : INetworkListener {
      * 取出元素
      */
     fun putRequest() = queue.take()!!
+
 
     companion object {
         val instance by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {

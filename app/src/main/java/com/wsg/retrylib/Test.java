@@ -11,9 +11,9 @@ import java.util.HashMap;
 public class Test {
     public static void main(String[] args) {
         RequestRetry instance = RequestRetry.Companion.getInstance();
+
         instance.setUploadClass(ClassA.class);
-        boolean isok=instance.addRequest(new MachineInfo(new HashMap(2)));
-        System.out.println(isok);
+        instance.addRequest(new MachineInfo(new HashMap(2)));
         instance.addRequest("dda1");
         instance.addRequest("dda2");
         instance.addRequest("dda3");
