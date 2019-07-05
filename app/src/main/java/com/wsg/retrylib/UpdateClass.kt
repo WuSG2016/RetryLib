@@ -1,6 +1,9 @@
 package com.wsg.retrylib
 
-import com.retail.newretail.vmc.RetryBean
+import com.wsg.retry.*
+import java.io.IOException
+import java.net.SocketTimeoutException
+
 
 /**局限性
  * 1.没有重试的次数
@@ -9,23 +12,39 @@ import com.retail.newretail.vmc.RetryBean
 
 @UploadClass
 class UpdateClass {
-
-    @ClassBean(name = MachineInfo::class)
-    fun uploadMachineInfo(retryBean: RetryBean<*>) {
+    private var count = 0
+    private var count1 = 0
+    @ClassBean(BeanClass = "MachineInfo")
+    fun uploadMachineInfo(retryBean: RetryBean<MachineInfo>) {
+        count += 1
+        if (count < 5) {
+            println(2)
+            throw RuntimeException("ddad")
+        }
         println("上传机器错误接口")
     }
+
     @Repetition
-    @ClassBean(name = MachineInfo::class)
+    @ClassBean(BeanClass = "MachineInfo")
     fun uploadMachineInfo2(retryBean: RetryBean<*>) {
+        count1 += 1
+        if (count1 == 2) {
+            println(1)
+            throw SocketTimeoutException("io ex")
+        }
+        if (count1 < 5) {
+            println(2)
+            throw IOException("io ex1")
+        }
         println("上传机器错误接口2")
     }
 
-    @ClassBean(name = String::class)
+    @ClassBean(BeanClass = "String")
     fun uploadMachineStatus(retryBean: RetryBean<*>) {
         println("上传机器状态接口")
     }
 
-    fun isok(){
+    fun isok() {
 
     }
 }

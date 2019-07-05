@@ -1,6 +1,6 @@
-package com.wsg.retrylib
+package com.wsg.retry
 
-import kotlin.reflect.KClass
+
 
 /**
  * 上传的类名
@@ -12,7 +12,7 @@ annotation class UploadClass
  * 上传对应的Bean
  */
 @Target(AnnotationTarget.FUNCTION)
-annotation class ClassBean(val name: KClass<out Any>)
+annotation class ClassBean(val BeanClass: String)
 
 /**
  * 用于添加ClassBean重复的方法
