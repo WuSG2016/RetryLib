@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
          */
         instance.setUploadClass(ClassA::class.java)
         /**
-         * 注册广播
+         * 注册网络广播
          */
         instance.registerNetworkReceiver(this)
         /**
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
          */
         instance.addRequest<Any>(MachineInfo(HashMap(2)))
 
-        instance.addRequest<Any>("dda1")
+        instance.addRequest<Any>("dda1","uploadMachineState")
         instance.addRequest<Any>("dda2")
         instance.addRequest<Any>("dda3")
         instance.addRequest<Any>("dda4")

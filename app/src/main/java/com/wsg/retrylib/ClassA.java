@@ -11,12 +11,12 @@ import java.net.SocketTimeoutException;
 @UploadClass
 public class ClassA {
     @ClassBean(BeanClass = "MachineInfo")
-    public void uploadmachineInfo(RetryBean<MachineInfo> retryBean) {
+    public void uploadMachineInfo(RetryBean<MachineInfo> retryBean) {
         System.out.println(retryBean.getT().toString() + "上传机器消息");
     }
 
     @ClassBean(BeanClass = "String")
-    public Integer uploadmachine(RetryBean<String> retryBean) throws Exception {
+    public Integer uploadMachine(RetryBean<String> retryBean) throws Exception {
         if (retryBean.getT().equals("dda3")) {
             return 1;
         }
@@ -25,5 +25,11 @@ public class ClassA {
         }
         Log.e("uploadmachine: ", "上传机器状态" + retryBean.getT());
         return -1;
+    }
+
+    @Repetition
+    @ClassBean(BeanClass = "String")
+    public void uploadMachineState(RetryBean<String> retryBean) {
+        System.out.println(retryBean.getT().toString() + "上传机器状态");
     }
 }

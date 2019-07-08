@@ -4,16 +4,13 @@ package com.wsg.retry
 import android.content.Context
 import java.lang.IllegalArgumentException
 import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import java.util.concurrent.ThreadPoolExecutor
 import kotlin.collections.HashMap
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import android.content.IntentFilter
 import android.util.Log
-import javax.security.auth.login.LoginException
 
 
 /**

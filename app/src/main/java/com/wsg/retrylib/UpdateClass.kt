@@ -6,8 +6,6 @@ import java.net.SocketTimeoutException
 
 
 /**局限性
- * 1.没有重试的次数
- * 2.classBean相同 如何实现到底调用哪个方法
  */
 
 @UploadClass
@@ -44,7 +42,4 @@ class UpdateClass {
         println("上传机器状态接口")
     }
 
-    fun isok() {
-
-    }
 }

@@ -2,10 +2,6 @@ package com.wsg.retry
 
 
 import java.lang.Exception
-import java.lang.reflect.InvocationTargetException
-import java.net.ConnectException
-import java.net.SocketException
-import java.net.SocketTimeoutException
 
 
 /**

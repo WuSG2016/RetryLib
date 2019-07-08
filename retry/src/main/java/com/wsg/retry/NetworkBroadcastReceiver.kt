@@ -12,7 +12,6 @@ import android.net.ConnectivityManager
  */
 class NetworkBroadcastReceiver : BroadcastReceiver() {
 
-
     companion object {
        private const val MOBILE = 1001
        private const val NETWORK_WIFI = 1002
