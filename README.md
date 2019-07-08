@@ -1,8 +1,23 @@
 # RetryLib 
 # 基于注解+反射的网络重试请求库
 ##### 使用语言Kotlin
-#### 使用方式
-**Gradle方式:添加--到APP的build.gradle文件中**
+#### Gradle使用方式
+- **顶部build.gradle添加** 
+```
+	allprojects {
+		repositories {
+			...
+			//添加
+			maven { url 'https://www.jitpack.io' }
+		}
+	}
+```
+- **APP的build.gradle文件增加**
+```
+dependencies {
+	        implementation 'com.github.WuSG2016:RetryLib:1.0'
+	}
+```
 #### 原理
  库中维护一个阻塞队列,用于添加请求的实体Bean(已封装成RetryBean),同时维护一个线程,
 不断的从队列中取出消息,并执行反射中的方法.首先,你需要添加一个上传接口的实现类,
