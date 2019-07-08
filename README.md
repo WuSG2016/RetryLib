@@ -36,7 +36,7 @@ public class ClassA {
 #### 注解说明
 #### 1.注解 ClassBean： RetryBean里传递的类型
 #### 2.注解 Repetition： ClassBean注解里如果类型重复，需要添加此注解，同时还需要在添加队列时增加方法名称,比如
-#### 1.注解 UploadClass： 上传类需要在类上添加,否则无法识别
+#### 1.注解 UploadClass： 需要在上传类上添加,否则无法识别
 ```
   val instance = RequestRetry.instance
   instance.addRequest<Any>("dda1","uploadMachineState")
