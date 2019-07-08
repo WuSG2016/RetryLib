@@ -27,11 +27,11 @@ class RequestRetry private constructor() : INetworkListener {
     override fun onNetworkState(state: Int) {
         when (state) {
             NetworkBroadcastReceiver.NETWORK_NONE -> {
-                Log.e("onNetworkState", "网络已断开")
+                Log.e("Retry", "网络已断开")
                 stop()
             }
             else -> {
-                Log.e("onNetworkState", "网络已连接")
+                Log.e("Retry", "网络已连接")
                 start()
             }
         }
@@ -117,7 +117,7 @@ class RequestRetry private constructor() : INetworkListener {
     }
 
     fun addRetryBean(retryBean: RetryBean<*>) {
-        Log.e("Retry", "继续添加到队列中")
+        Log.e("Retry", "重新添加到队列中$retryBean")
         this.queue.offer(retryBean)
     }
 

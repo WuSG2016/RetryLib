@@ -16,10 +16,14 @@ public class ClassA {
     }
 
     @ClassBean(BeanClass = "String")
-    public void uploadmachine(RetryBean<String> retryBean) throws SocketTimeoutException {
-        if(retryBean.getT().equals("dda4")){
+    public Integer uploadmachine(RetryBean<String> retryBean) throws Exception {
+        if (retryBean.getT().equals("dda3")) {
+            return 1;
+        }
+        if (retryBean.getT().startsWith("dd")) {
             throw new SocketTimeoutException("dd");
         }
         Log.e("uploadmachine: ", "上传机器状态" + retryBean.getT());
+        return -1;
     }
 }
