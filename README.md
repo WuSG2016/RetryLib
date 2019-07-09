@@ -2,7 +2,7 @@
 # 基于注解+反射的网络重试请求库
 ##### 使用语言Kotlin
 #### Gradle使用方式
-- **顶部build.gradle添加** 
+- **根目录build.gradle添加** 
 ```
 	allprojects {
 		repositories {
@@ -51,11 +51,12 @@ public class ClassA {
 #### 注解说明
 #### 1.注解 ClassBean： RetryBean里传递的类型
 #### 2.注解 Repetition： ClassBean注解里如果类型重复，需要添加此注解，同时还需要在添加队列时增加方法名称,比如
-#### 1.注解 UploadClass： 需要在上传类上添加,否则无法识别
 ```
   val instance = RequestRetry.instance
   instance.addRequest<Any>("dda1","uploadMachineState")
 ```
+#### 3.注解 UploadClass： 需要在上传类上添加,否则无法识别
+
 #### 注意事项
 - **1.** 网络断开状态时 队列停止 不从队列中取出消息,网络连接时队列正常运行
 - **2.**
@@ -79,7 +80,7 @@ open class RetryIfException<T : Exception, E : Any> {
 }
 ```
 result为方法执行的结果,t为异常类型,可以根据结果和异常类型进行重试
-默认使用DefaultRetryIfException类,遇到SocketTimeoutException,
+默认使用DefaultRetryIfException类,当遇到SocketTimeoutException,
 SocketException, ConnectException异常进行重试,到达最大次数不进行重试。 
 ### 库的局限性
 - **1.**
