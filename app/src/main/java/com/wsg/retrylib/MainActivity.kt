@@ -1,7 +1,9 @@
 package com.wsg.retrylib
 
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.wsg.retry.RequestRetry
 import java.util.HashMap
 
@@ -10,6 +12,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.e("序列号", "${Build.SERIAL}")
         val instance = RequestRetry.instance
         /**
          * 设置上传的类 必须包含UploadClass注解
@@ -24,7 +27,7 @@ class MainActivity : AppCompatActivity() {
          */
         instance.addRequest<Any>(MachineInfo(HashMap(2)))
 
-        instance.addRequest<Any>("dda1","uploadMachineState")
+        instance.addRequest<Any>("dda1", "uploadMachineState")
         instance.addRequest<Any>("dda2")
         instance.addRequest<Any>("dda3")
         instance.addRequest<Any>("dda4")

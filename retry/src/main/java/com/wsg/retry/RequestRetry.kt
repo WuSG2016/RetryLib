@@ -149,22 +149,22 @@ class RequestRetry private constructor() : INetworkListener {
                     var key: String?
                     var isClassBean = false
                     var isRepetition = false
-                    var annotation: Annotation? = null
+                    var annotationClassBean: Annotation? = null
                     for (an in annotations) {
                         if (an is ClassBean) {
                             isClassBean = true
+                            annotationClassBean = an
                         } else if (an is Repetition) {
                             isRepetition = true
                         }
-                        annotation = an
                     }
                     key = if (isClassBean && isRepetition) {
-                        "${(annotation as ClassBean).BeanClass}||${k.name}"
+                        "${(annotationClassBean!! as ClassBean).BeanClass}||${k.name}"
                     } else {
                         if (isRepetition) {
                             throw IllegalArgumentException("No add ClassBean annotation")
                         }
-                        (annotation as ClassBean).BeanClass
+                        (annotationClassBean!! as ClassBean).BeanClass
                     }
                     retryHashMap[key] = k
                 }
