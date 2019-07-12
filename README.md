@@ -15,7 +15,7 @@
 - **APP的build.gradle文件增加**
 ```
 dependencies {
-	        implementation 'com.github.WuSG2016:RetryLib:1.0'
+	        implementation 'com.github.WuSG2016:RetryLib:Tag'
 	}
 ```
 #### 原理
