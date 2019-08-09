@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         /**
          * 设置上传的类 必须包含UploadClass注解
          */
-        instance.setUploadClass(ClassA::class.java)
+        instance.setUploadClass(UpdateClass::class.java)
         /**
          * 注册网络广播
          */
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         /**
          * 添加消息
          */
-        instance.addRequest<Any>(MachineInfo(HashMap(2)))
+//        instance.addRequest<Any>(MachineInfo(HashMap(2)))
 
         instance.addRequest<Any>("dda1", "uploadMachineState")
         instance.addRequest<Any>("dda2")

@@ -86,6 +86,7 @@ SocketException, ConnectException异常进行重试,到达最大次数不进行�
 - **1.**
   重试的请求方法不能及时执行,只能做类似订单上报等不关心上传时机和实时返回的数据等
 - **2.** Kotlin第一次反射效率低 之后会比第一次快(但效率略低于JAVA) 
+- **3.** UploadClass注解类不能使用private修饰 包括构造方法
 ### 推荐使用Kotlin的方法构造 比如：
 ```
    with(RequestRetry.instance) {

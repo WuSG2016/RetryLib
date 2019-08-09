@@ -13,8 +13,9 @@ import android.net.ConnectivityManager
 class NetworkBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
-       private const val MOBILE = 1001
-       private const val NETWORK_WIFI = 1002
+        private const val MOBILE = 1001
+        private const val NETWORK_WIFI = 1002
+        private const val ETHERNET = 1003
         const val NETWORK_NONE = -1
         var listener: INetworkListener? = null
         const val NETWORK_ACTION = "android.net.conn.CONNECTIVITY_CHANGE"
@@ -31,6 +32,8 @@ class NetworkBroadcastReceiver : BroadcastReceiver() {
                     return NETWORK_WIFI//wifi
                 } else if (activeNetworkInfo.type == (ConnectivityManager.TYPE_MOBILE)) {
                     return MOBILE//mobile
+                } else if (activeNetworkInfo.type == (ConnectivityManager.TYPE_ETHERNET)) {
+                    return ETHERNET
                 }
             } else {
                 return NETWORK_NONE
