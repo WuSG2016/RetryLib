@@ -1,6 +1,7 @@
 package com.wsg.retry
 
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import java.lang.IllegalArgumentException
 import java.util.concurrent.ArrayBlockingQueue
@@ -11,13 +12,14 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import android.content.IntentFilter
 import android.util.Log
+import java.lang.ref.WeakReference
 
 
 /**
  * 请求重试类
  */
 
-class RequestRetry private constructor() : INetworkListener {
+class RequestRetry private constructor() : INetworkListener  {
     /**
      * 网络状态变更的回调
      */
@@ -40,6 +42,7 @@ class RequestRetry private constructor() : INetworkListener {
     var isTerminate: Boolean = true
     var sleepTime: Long = 5000L
     private val poolExecutor = Executors.newFixedThreadPool(10)
+    private var weakReference:WeakReference<Context>?=null
 
 
     /**
@@ -77,21 +80,23 @@ class RequestRetry private constructor() : INetworkListener {
      * 网络广播注册
      */
     fun registerNetworkReceiver(context: Context) {
+        weakReference=WeakReference(context)
         val filter = IntentFilter()
         filter.addAction(NetworkBroadcastReceiver.NETWORK_ACTION)
         networkBroadcastReceiver = NetworkBroadcastReceiver()
         NetworkBroadcastReceiver.listener = this
-        this.isTerminate = NetworkBroadcastReceiver.getNetworkState(context) == NetworkBroadcastReceiver.NETWORK_NONE
+        this.isTerminate = NetworkBroadcastReceiver.getNetworkState(weakReference?.get()) == NetworkBroadcastReceiver.NETWORK_NONE
         Log.e("Retry", "当前状态网络状态 ${!isTerminate}")
-        context.registerReceiver(networkBroadcastReceiver, filter)
+        weakReference?.get()?.registerReceiver(networkBroadcastReceiver, filter)
     }
 
     /**
      * 网络广播解除注册
      */
-    fun unregisterNetworkReceiver(context: Context) {
+    fun unregisterNetworkReceiver() {
         if (networkBroadcastReceiver != null) {
-            context.unregisterReceiver(networkBroadcastReceiver)
+            weakReference?.get()?.unregisterReceiver(networkBroadcastReceiver)
+            networkBroadcastReceiver = null
         }
     }
 

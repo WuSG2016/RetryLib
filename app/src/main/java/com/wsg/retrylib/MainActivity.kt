@@ -1,14 +1,16 @@
 package com.wsg.retrylib
 
+import android.app.Activity
+import android.content.BroadcastReceiver
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
+
 import android.os.Bundle
 import android.util.Log
 import com.wsg.retry.RequestRetry
 import java.util.HashMap
 
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : Activity() {
+ var netw :BroadcastReceiver?= null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,4 +36,10 @@ class MainActivity : AppCompatActivity() {
         instance.addRequest<Any>("dda5")
         instance.addRequest<Any>("dda6")
     }
+
+    override fun onPause() {
+        super.onPause()
+       RequestRetry.instance.unregisterNetworkReceiver()
+    }
+
 }
