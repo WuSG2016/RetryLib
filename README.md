@@ -1,3 +1,4 @@
+[![Release](https://jitpack.io/v/WuSG2016/RetryLib.svg)](https://jitpack.io/#WuSG2016/RetryLib)
 # RetryLib 
 # 基于注解+反射的网络重试请求库
 ##### 使用语言Kotlin
