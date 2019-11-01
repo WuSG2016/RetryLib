@@ -16,16 +16,28 @@ class LooperRetryRequestRunnable : Runnable {
                 //有可能在休眠时间网络断开 需要重新判断
                 if (!(RequestRetry.instance.isTerminate)) {
                     val request = RequestRetry.instance.putRequest()
-                    val re = request as RetryBean<*>
-                    val isAddMessage = try {
-                        val result = re.kFunction.call(RequestRetry.instance.kClassInstance, re)
-                        RequestRetry.instance.retryIfException.onRetryException(re, null, result)
-                    } catch (e: Exception) {
-                        RequestRetry.instance.retryIfException.onRetryException(re, e, null)
-                    }
-                    if (isAddMessage) {
-                        re.retryCount += 1
-                        RequestRetry.instance.addRetryBean(re)
+                    if (request != null) {
+                        val isAddMessage = try {
+                            val result = request.kFunction.call(
+                                RequestRetry.instance.kClassInstance,
+                                request
+                            )
+                            RequestRetry.instance.retryIfException.onRetryException(
+                                request,
+                                null,
+                                result
+                            )
+                        } catch (e: Exception) {
+                            RequestRetry.instance.retryIfException.onRetryException(
+                                request,
+                                e,
+                                null
+                            )
+                        }
+                        if (isAddMessage) {
+                            request.retryCount += 1
+                            RequestRetry.instance.addRetryBean(request)
+                        }
                     }
                 }
             }

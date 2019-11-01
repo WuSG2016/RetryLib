@@ -99,3 +99,9 @@ SocketException, ConnectException异常进行重试,到达最大次数不进行�
         this.sleepTime = 3L
     }
 ```
+###更新
+- **Version -1.4**
+ 队列包含同一个RetryBean对象时不再添加 RetryBean<*>类型
+ kotlin:
+   data 数据类      ==   比较参数的内容是否相等
+   class 类        ==   比较的是对象地址

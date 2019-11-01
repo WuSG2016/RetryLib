@@ -13,13 +13,14 @@ import kotlin.reflect.full.declaredMemberFunctions
 import android.content.IntentFilter
 import android.util.Log
 import java.lang.ref.WeakReference
+import java.util.concurrent.ConcurrentHashMap
 
 
 /**
  * 请求重试类
  */
 
-class RequestRetry private constructor() : INetworkListener  {
+class RequestRetry private constructor() : INetworkListener {
     /**
      * 网络状态变更的回调
      */
@@ -42,7 +43,7 @@ class RequestRetry private constructor() : INetworkListener  {
     var isTerminate: Boolean = true
     var sleepTime: Long = 5000L
     private val poolExecutor = Executors.newFixedThreadPool(10)
-    private var weakReference:WeakReference<Context>?=null
+    private var weakReference: WeakReference<Context>? = null
 
 
     /**
@@ -50,8 +51,7 @@ class RequestRetry private constructor() : INetworkListener  {
      */
     var retryTime: Int = 3
         set(value) {
-            if (value <= 1)
-                throw IllegalArgumentException("retryTime should bigger than 1")
+            require(value > 1) { "retryTime should bigger than 1" }
             field = value
         }
 
@@ -66,6 +66,7 @@ class RequestRetry private constructor() : INetworkListener  {
      * 上传类型类
      */
     private var kClass: KClass<*>? = null
+    private val mRecordMap: ConcurrentHashMap<RetryBean<*>, Any?> = ConcurrentHashMap()
 
     fun setUploadClass(t: Class<*>) {
         kClass = t.kotlin
@@ -80,12 +81,13 @@ class RequestRetry private constructor() : INetworkListener  {
      * 网络广播注册
      */
     fun registerNetworkReceiver(context: Context) {
-        weakReference=WeakReference(context)
+        weakReference = WeakReference(context)
         val filter = IntentFilter()
         filter.addAction(NetworkBroadcastReceiver.NETWORK_ACTION)
         networkBroadcastReceiver = NetworkBroadcastReceiver()
         NetworkBroadcastReceiver.listener = this
-        this.isTerminate = NetworkBroadcastReceiver.getNetworkState(weakReference?.get()) == NetworkBroadcastReceiver.NETWORK_NONE
+        this.isTerminate =
+            NetworkBroadcastReceiver.getNetworkState(weakReference?.get()) == NetworkBroadcastReceiver.NETWORK_NONE
         Log.e("Retry", "当前状态网络状态 ${!isTerminate}")
         weakReference?.get()?.registerReceiver(networkBroadcastReceiver, filter)
     }
@@ -111,16 +113,35 @@ class RequestRetry private constructor() : INetworkListener  {
             "${al!!.javaClass.simpleName}||$method"
         }
         if (retryHashMap.containsKey(key)) {
-            val method = retryHashMap[key]
-            this.queue.put(RetryBean(t, method!!))
-            return true
+            val function = retryHashMap[key]
+            val retryBean = RetryBean(t, function!!)
+            //判断是否已经添加过
+            return if (!mRecordMap.containsKey(retryBean)) {
+                this.queue.offer(retryBean)
+                mRecordMap[retryBean] = function
+                Log.e("添加retryBean到队列->>", retryBean.toString())
+                true
+            } else {
+                Log.e("队列已存在记录->>", "${retryBean}不添加")
+                false
+            }
+
         }
         return false
     }
 
+    /**
+     * 判断队列是否包含
+     */
     fun addRetryBean(retryBean: RetryBean<*>) {
-        Log.e("Retry", "重新添加到队列中$retryBean")
-        this.queue.offer(retryBean)
+        Log.e("addRetryBean", "重新添加到队列中$retryBean")
+        if (!mRecordMap.containsKey(retryBean)) {
+            this.queue.offer(retryBean)
+            this.mRecordMap[retryBean] = retryBean.kFunction
+            Log.e("添加-->", retryBean.toString())
+        } else {
+            Log.e("队列已存在记录->>", retryBean.toString())
+        }
     }
 
     private fun getClassBeanFunc(annotation: List<Annotation>): Boolean {
@@ -147,7 +168,8 @@ class RequestRetry private constructor() : INetworkListener  {
             val memberFunList: Collection<KFunction<*>> = kClass!!.declaredMemberFunctions
             if (memberFunList.isNotEmpty()) {
                 //获取带有ClassBean注解的方法
-                val classBeanFunctionList = memberFunList.filter { getClassBeanFunc(it.annotations) }
+                val classBeanFunctionList =
+                    memberFunList.filter { getClassBeanFunc(it.annotations) }
                 //获取注解里的值
                 for (k in classBeanFunctionList) {
                     val annotations = k.annotations
@@ -166,9 +188,7 @@ class RequestRetry private constructor() : INetworkListener  {
                     key = if (isClassBean && isRepetition) {
                         "${(annotationClassBean!! as ClassBean).BeanClass}||${k.name}"
                     } else {
-                        if (isRepetition) {
-                            throw IllegalArgumentException("No add ClassBean annotation")
-                        }
+                        require(!isRepetition) { "No add ClassBean annotation" }
                         (annotationClassBean!! as ClassBean).BeanClass
                     }
                     retryHashMap[key] = k
@@ -179,10 +199,24 @@ class RequestRetry private constructor() : INetworkListener  {
     }
 
     /**
-     * 取出元素
+     * 取出元素 删除记录
      */
-    fun putRequest() = queue.take()!!
-
+    fun putRequest(): RetryBean<*>? {
+        return when (val retryBean = queue.take()) {
+            is RetryBean<*> -> {
+                if (mRecordMap.containsKey(retryBean)) {
+                    mRecordMap.remove(retryBean)
+                    retryBean
+                } else {
+                    Log.e("数据未存在插入信息队列中", retryBean.toString())
+                    null
+                }
+            }
+            else -> {
+                null
+            }
+        }
+    }
 
     companion object {
         val instance by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {

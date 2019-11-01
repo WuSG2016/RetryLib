@@ -17,7 +17,7 @@ class UpdateClass {
         count += 1
         if (count < 5) {
             println(2)
-            throw RuntimeException("ddad")
+            getThrowable()
         }
         println("上传机器错误接口")
     }

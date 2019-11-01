@@ -10,7 +10,7 @@ import com.wsg.retry.RequestRetry
 import java.util.HashMap
 
 class MainActivity : Activity() {
- var netw :BroadcastReceiver?= null
+    var netw: BroadcastReceiver? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,16 +30,35 @@ class MainActivity : Activity() {
 //        instance.addRequest<Any>(MachineInfo(HashMap(2)))
 
         instance.addRequest<Any>("dda1", "uploadMachineState")
-        instance.addRequest<Any>("dda2")
-        instance.addRequest<Any>("dda3")
-        instance.addRequest<Any>("dda4")
-        instance.addRequest<Any>("dda5")
-        instance.addRequest<Any>("dda6")
+        val map = HashMap<String, String>()
+        map["dad"] = "dada"
+        val map1 = HashMap<String, String>()
+        map1["dad"] = "dada"
+        val machineInfo = MachineInfo(map)
+        val machineInfo1 = MachineInfo(map1)
+//        instance.addRequest<Any>("dda2")
+        instance.addRequest(machineInfo)
+        Thread(Runnable {
+            Thread.sleep(3000)
+            instance.addRequest(machineInfo)
+        }).start()
+        Thread(Runnable {
+            Thread.sleep(4000)
+            instance.addRequest(machineInfo1)
+        }).start()
+        Thread(Runnable {
+            Thread.sleep(5000)
+            instance.addRequest(machineInfo)
+        }).start()
+//        instance.addRequest<Any>("dda3")
+//        instance.addRequest<Any>("dda4")
+//        instance.addRequest<Any>("dda5")
+//        instance.addRequest<Any>("dda6")
     }
 
     override fun onPause() {
         super.onPause()
-       RequestRetry.instance.unregisterNetworkReceiver()
+        RequestRetry.instance.unregisterNetworkReceiver()
     }
 
 }
