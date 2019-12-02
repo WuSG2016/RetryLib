@@ -1,6 +1,7 @@
 package com.wsg.retrylib;
 
 import android.util.Log;
+
 import com.wsg.retry.ClassBean;
 import com.wsg.retry.Repetition;
 import com.wsg.retry.RetryBean;

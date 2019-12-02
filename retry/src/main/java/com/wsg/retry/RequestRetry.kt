@@ -12,6 +12,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import android.content.IntentFilter
 import android.util.Log
+import com.wsg.common.Logger
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 
@@ -21,17 +22,18 @@ import java.util.concurrent.ConcurrentHashMap
  */
 
 class RequestRetry private constructor() : INetworkListener {
+    private val logTag = "retryLog"
     /**
      * 网络状态变更的回调
      */
     override fun onNetworkState(state: Int) {
         when (state) {
             NetworkBroadcastReceiver.NETWORK_NONE -> {
-                Log.e("Retry", "网络已断开")
+                Logger.otherTagLog("Retry", "网络已断开", logTag)
                 stop()
             }
             else -> {
-                Log.e("Retry", "网络已连接")
+                Logger.otherTagLog("Retry", "网络已连接", logTag)
                 start()
             }
         }
@@ -88,7 +90,7 @@ class RequestRetry private constructor() : INetworkListener {
         NetworkBroadcastReceiver.listener = this
         this.isTerminate =
             NetworkBroadcastReceiver.getNetworkState(weakReference?.get()) == NetworkBroadcastReceiver.NETWORK_NONE
-        Log.e("Retry", "当前状态网络状态 ${!isTerminate}")
+        Logger.otherTagLog("Retry", "当前状态网络状态 ${!isTerminate}", logTag)
         weakReference?.get()?.registerReceiver(networkBroadcastReceiver, filter)
     }
 
@@ -119,10 +121,10 @@ class RequestRetry private constructor() : INetworkListener {
             return if (!mRecordMap.containsKey(retryBean)) {
                 this.queue.offer(retryBean)
                 mRecordMap[retryBean] = function
-                Log.e("添加retryBean到队列->>", retryBean.toString())
+                Logger.otherTagLog("添加retryBean到队列->>", retryBean.toString(), logTag)
                 true
             } else {
-                Log.e("队列已存在记录->>", "${retryBean}不添加")
+                Logger.otherTagLog("队列已存在记录->>", "${retryBean}不添加", logTag)
                 false
             }
 
@@ -134,13 +136,13 @@ class RequestRetry private constructor() : INetworkListener {
      * 判断队列是否包含
      */
     fun addRetryBean(retryBean: RetryBean<*>) {
-        Log.e("addRetryBean", "重新添加到队列中$retryBean")
+        Logger.otherTagLog("addRetryBean", "重新添加到队列中$retryBean", logTag)
         if (!mRecordMap.containsKey(retryBean)) {
             this.queue.offer(retryBean)
             this.mRecordMap[retryBean] = retryBean.kFunction
-            Log.e("添加-->", retryBean.toString())
+            Logger.otherTagLog("添加-->", retryBean.toString(), logTag)
         } else {
-            Log.e("队列已存在记录->>", retryBean.toString())
+            Logger.otherTagLog("队列已存在记录->>", retryBean.toString(), logTag)
         }
     }
 
@@ -194,8 +196,15 @@ class RequestRetry private constructor() : INetworkListener {
                     retryHashMap[key] = k
                 }
                 poolExecutor.submit(LooperRetryRequestRunnable())
+                initLog()
             }
         }
+    }
+
+    private fun initLog() {
+        Logger.init()
+        Logger.addLogFile(logTag)
+
     }
 
     /**
@@ -208,7 +217,7 @@ class RequestRetry private constructor() : INetworkListener {
                     mRecordMap.remove(retryBean)
                     retryBean
                 } else {
-                    Log.e("数据未存在插入信息队列中", retryBean.toString())
+                    Logger.otherTagLog("数据未存在插入信息队列中", retryBean.toString(), logTag)
                     null
                 }
             }
