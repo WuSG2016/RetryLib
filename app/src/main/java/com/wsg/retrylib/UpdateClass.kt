@@ -38,7 +38,19 @@ class UpdateClass {
     }
 
     @ClassBean(BeanClass = "String")
+    @Repetition
     fun uploadMachineStatus(retryBean: RetryBean<*>) {
+        count += 1
+        if (count < 2) {
+            println(323)
+           throw SocketTimeoutException("ddad")
+        }
+        println("上传机器状态接口")
+    }
+
+    @ClassBean(BeanClass = "String")
+    @Repetition
+    fun uploadMachineStatus1(retryBean: RetryBean<*>) {
         count += 1
         if (count < 5) {
             println(32)
@@ -48,7 +60,7 @@ class UpdateClass {
                 throw SocketTimeoutException("ddad")
             }
         }
-        println("上传机器状态接口")
+        println("上传机器状态接口--")
     }
 
     fun getThrowable() {

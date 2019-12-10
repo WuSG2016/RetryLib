@@ -1,6 +1,8 @@
 package com.wsg.retry
 
 
+import android.util.Log
+import com.wsg.common.Logger
 import java.lang.Exception
 
 
@@ -8,7 +10,7 @@ import java.lang.Exception
  * 循坏发送线程
  */
 class LooperRetryRequestRunnable : Runnable {
-
+    private val logTag = "retryLog"
     override fun run() {
         while (true) {
             if (!(RequestRetry.instance.isTerminate)) {
@@ -22,12 +24,14 @@ class LooperRetryRequestRunnable : Runnable {
                                 RequestRetry.instance.kClassInstance,
                                 request
                             )
+                            Logger.otherTagLog(msg = "执行结果-->>${result}", logTag = logTag)
                             RequestRetry.instance.retryIfException.onRetryException(
                                 request,
                                 null,
                                 result
                             )
                         } catch (e: Exception) {
+                           Logger.otherTagLog(msg = "异常信息-->$e", logTag = logTag)
                             RequestRetry.instance.retryIfException.onRetryException(
                                 request,
                                 e,

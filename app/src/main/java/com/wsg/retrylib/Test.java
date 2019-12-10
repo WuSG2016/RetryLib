@@ -1,6 +1,7 @@
 package com.wsg.retrylib;
 
 import android.net.Network;
+
 import com.wsg.retry.LooperRetryRequestRunnable;
 import com.wsg.retry.RequestRetry;
 import com.wsg.retry.RetryBean;
@@ -12,7 +13,16 @@ import java.util.HashMap;
 
 public class Test {
     public static void main(String[] args) {
-        RequestRetry instance = RequestRetry.Companion.getInstance();
+        RequestRetry instance =
+                RequestRetry.Companion.getInstance()
+                        .setUploadClass(null)
+                        .setRetryIfException(null)
+                        .registerNetworkReceiver(null)
+                        .setRetryTime(1)
+                        .setSleepTime(1000);
+
+
+
 
 //        instance.setUploadClass(ClassA.class);
 //        instance.addRequest(new MachineInfo(new HashMap(2)));

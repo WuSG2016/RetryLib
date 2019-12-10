@@ -96,7 +96,7 @@ SocketException, ConnectException异常进行重试,到达最大次数不进行�
         //注册网络监听的广播
         this.registerNetworkReceiver(context)
         this.retryTime = 5
-        this.sleepTime = 3L
+        this.sleepTime = 3000L
     }
 ```
 ###更新
@@ -104,3 +104,12 @@ SocketException, ConnectException异常进行重试,到达最大次数不进行�
 - 队列包含同一个RetryBean对象时不再添加 RetryBean<*>类型
 -   data 数据类      ==   比较参数的内容是否相等
 -  class 类        ==   比较的是对象地址
+- **Version -1.5**
+- 增加日志记录 方便查询
+- **Version -1.61**
+- 修改异步问题 先记录插入数据再取数据
+- 增加设置方式
+
+
+
+
