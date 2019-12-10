@@ -18,7 +18,7 @@ public class Test {
                         .setUploadClass(null)
                         .setRetryIfException(null)
                         .registerNetworkReceiver(null)
-                        .setRetryTime(1)
+                        .setRetryTime(3)
                         .setSleepTime(1000);
 
 
