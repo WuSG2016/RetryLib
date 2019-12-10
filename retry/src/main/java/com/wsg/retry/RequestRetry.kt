@@ -1,9 +1,7 @@
 package com.wsg.retry
 
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import java.lang.IllegalArgumentException
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.Executors
 import kotlin.collections.HashMap
@@ -11,7 +9,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import android.content.IntentFilter
-import android.util.Log
+
 import com.wsg.common.Logger
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
@@ -26,9 +24,9 @@ class RequestRetry private constructor() : INetworkListener {
     /**
      * 网络状态变更的回调
      */
-    override fun onNetworkState(state: Int) {
+    override fun onNetworkState(state: Boolean) {
         when (state) {
-            NetworkBroadcastReceiver.NETWORK_NONE -> {
+            false -> {
                 Logger.otherTagLog("Retry", "网络已断开", logTag)
                 stop()
             }
@@ -119,8 +117,8 @@ class RequestRetry private constructor() : INetworkListener {
             val retryBean = RetryBean(t, function!!)
             //判断是否已经添加过
             return if (!mRecordMap.containsKey(retryBean)) {
-                this.queue.offer(retryBean)
                 mRecordMap[retryBean] = function
+                this.queue.offer(retryBean)
                 Logger.otherTagLog("添加retryBean到队列->>", retryBean.toString(), logTag)
                 true
             } else {
@@ -217,8 +215,8 @@ class RequestRetry private constructor() : INetworkListener {
                     mRecordMap.remove(retryBean)
                     retryBean
                 } else {
-                    Logger.otherTagLog("数据未存在插入信息队列中", retryBean.toString(), logTag)
-                    null
+                    Logger.otherTagLog("数据未存在插入信息队列中或取出在插入之前", retryBean.toString(), logTag)
+                    retryBean
                 }
             }
             else -> {

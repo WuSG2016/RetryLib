@@ -15,10 +15,10 @@ class UpdateClass {
     @ClassBean(BeanClass = "MachineInfo")
     fun uploadMachineInfo(retryBean: RetryBean<MachineInfo>) {
         count += 1
-        if (count < 5) {
-            println(2)
-            getThrowable()
-        }
+//        if (count < 5) {
+//            println(2)
+//            getThrowable()
+//        }
         println("上传机器错误接口")
     }
 

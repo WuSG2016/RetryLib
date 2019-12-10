@@ -38,18 +38,18 @@ class MainActivity : Activity() {
         val machineInfo1 = MachineInfo(map1)
 //        instance.addRequest<Any>("dda2")
         instance.addRequest(machineInfo)
-        Thread(Runnable {
-            Thread.sleep(3000)
-            instance.addRequest(machineInfo)
-        }).start()
-        Thread(Runnable {
-            Thread.sleep(4000)
-            instance.addRequest(machineInfo1)
-        }).start()
-        Thread(Runnable {
-            Thread.sleep(5000)
-            instance.addRequest(machineInfo)
-        }).start()
+//        Thread(Runnable {
+//            Thread.sleep(3000)
+//            instance.addRequest(machineInfo)
+//        }).start()
+//        Thread(Runnable {
+//            Thread.sleep(4000)
+//            instance.addRequest(machineInfo1)
+//        }).start()
+//        Thread(Runnable {
+//            Thread.sleep(5000)
+//            instance.addRequest(machineInfo)
+//        }).start()
 //        instance.addRequest<Any>("dda3")
 //        instance.addRequest<Any>("dda4")
 //        instance.addRequest<Any>("dda5")

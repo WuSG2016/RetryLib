@@ -7,5 +7,5 @@ interface INetworkListener {
     /**
      * 网络状态
      */
-    fun onNetworkState(state: Int)
+    fun onNetworkState(state: Boolean)
 }
