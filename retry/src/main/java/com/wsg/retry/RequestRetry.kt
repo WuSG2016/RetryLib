@@ -161,6 +161,7 @@ class RequestRetry private constructor() : INetworkListener {
         Logger.otherTagLog("addRetryBean", "重新添加到队列中$retryBean", logTag)
         if (!mRecordMap.containsKey(retryBean)) {
             this.mRecordMap[retryBean] = retryBean.kFunction
+            retryBean.retryCount += 1
             //异步增加和取出 先存 再取
             this.queue.offer(retryBean)
             Logger.otherTagLog("添加-->", retryBean.toString(), logTag)
@@ -233,8 +234,8 @@ class RequestRetry private constructor() : INetworkListener {
     /**
      * 取出元素 删除记录
      */
-    fun putRequest(): RetryBean<*>? {
-        return when (val retryBean = queue.take()) {
+    fun pollRequest(): RetryBean<*>? {
+        return when (val retryBean = queue.poll()) {
             is RetryBean<*> -> {
                 if (mRecordMap.containsKey(retryBean)) {
                     mRecordMap.remove(retryBean)

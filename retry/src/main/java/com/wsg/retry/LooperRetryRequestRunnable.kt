@@ -7,7 +7,7 @@ import java.lang.Exception
 
 
 /**
- * 循坏发送线程
+ * 循坏线程
  */
 class LooperRetryRequestRunnable : Runnable {
     private val logTag = "retryLog"
@@ -17,7 +17,7 @@ class LooperRetryRequestRunnable : Runnable {
                 Thread.sleep(RequestRetry.instance.sleepTime)
                 //有可能在休眠时间网络断开 需要重新判断
                 if (!(RequestRetry.instance.isTerminate)) {
-                    val request = RequestRetry.instance.putRequest()
+                    val request = RequestRetry.instance.pollRequest()
                     if (request != null) {
                         val isAddMessage = try {
                             val result = request.kFunction.call(
@@ -39,7 +39,6 @@ class LooperRetryRequestRunnable : Runnable {
                             )
                         }
                         if (isAddMessage) {
-                            request.retryCount += 1
                             RequestRetry.instance.addRetryBean(request)
                         }
                     }
