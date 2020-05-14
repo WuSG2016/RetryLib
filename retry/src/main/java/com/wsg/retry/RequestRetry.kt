@@ -10,7 +10,7 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
 import android.content.IntentFilter
 
-import com.wsg.common.Logger
+
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 
@@ -20,18 +20,19 @@ import java.util.concurrent.ConcurrentHashMap
  */
 
 class RequestRetry private constructor() : INetworkListener {
-    private val logTag = "retryLog"
+
+
     /**
      * 网络状态变更的回调
      */
     override fun onNetworkState(state: Boolean) {
         when (state) {
             false -> {
-                Logger.otherTagLog("Retry", "网络已断开", logTag)
+                _RetryLogger.retry("网络已断开")
                 stop()
             }
             else -> {
-                Logger.otherTagLog("Retry", "网络已连接", logTag)
+                _RetryLogger.retry("网络已连接")
                 start()
             }
         }
@@ -68,6 +69,7 @@ class RequestRetry private constructor() : INetworkListener {
     var kClassInstance: Any? = null
         private set
     private var networkBroadcastReceiver: NetworkBroadcastReceiver? = null
+
     /**
      * 默认重试异常
      */
@@ -106,7 +108,7 @@ class RequestRetry private constructor() : INetworkListener {
         networkBroadcastReceiver = NetworkBroadcastReceiver()
         NetworkBroadcastReceiver.listener = this
         this.isTerminate = !NetworkBroadcastReceiver.checkNet(weakReference!!.get()!!)
-        Logger.otherTagLog("Retry", "当前状态网络状态 ${!isTerminate}", logTag)
+        _RetryLogger.retry("当前状态网络状态: ${!isTerminate}")
         weakReference?.get()?.registerReceiver(networkBroadcastReceiver, filter)
         return instance
     }
@@ -132,7 +134,7 @@ class RequestRetry private constructor() : INetworkListener {
             "${al!!.javaClass.simpleName}||$method"
 
         }
-        Logger.otherTagLog(msg = "查找健-->$key", logTag = logTag)
+        _RetryLogger.retry("查找健:$key")
         if (retryHashMap.containsKey(key)) {
             val function = retryHashMap[key]
             val retryBean = RetryBean(t, function!!)
@@ -140,16 +142,17 @@ class RequestRetry private constructor() : INetworkListener {
             return if (!mRecordMap.containsKey(retryBean)) {
                 mRecordMap[retryBean] = function
                 this.queue.offer(retryBean)
-                Logger.otherTagLog("添加retryBean到队列->>", retryBean.toString(), logTag)
+                _RetryLogger.retry("添加retryBean到队列:${retryBean}")
                 true
             } else {
-                Logger.otherTagLog("队列已存在记录->>", "${retryBean}不添加", logTag)
+                _RetryLogger.retry("队列已存在记录: ${retryBean}不添加")
+
                 false
             }
 
         } else {
-            Logger.otherTagLog(msg = "未找到对应的方法", logTag = logTag)
-            Logger.otherTagLog(msg = "上传类找到的信息-->>${retryHashMap}", logTag = logTag)
+            _RetryLogger.retry("未找到对应的方法")
+            _RetryLogger.retry("上传类找到的信息:${retryHashMap}")
         }
         return false
     }
@@ -158,15 +161,15 @@ class RequestRetry private constructor() : INetworkListener {
      * 判断队列是否包含
      */
     fun addRetryBean(retryBean: RetryBean<*>) {
-        Logger.otherTagLog("addRetryBean", "重新添加到队列中$retryBean", logTag)
+        _RetryLogger.retry("重新添加到队列中: $retryBean")
         if (!mRecordMap.containsKey(retryBean)) {
             this.mRecordMap[retryBean] = retryBean.kFunction
             retryBean.retryCount += 1
             //异步增加和取出 先存 再取
             this.queue.offer(retryBean)
-            Logger.otherTagLog("添加-->", retryBean.toString(), logTag)
+            _RetryLogger.retry("添加:$retryBean")
         } else {
-            Logger.otherTagLog("队列已存在记录->>", retryBean.toString(), logTag)
+            _RetryLogger.retry("队列已存在记录:$retryBean")
         }
     }
 
@@ -220,16 +223,10 @@ class RequestRetry private constructor() : INetworkListener {
                     retryHashMap[key] = k
                 }
                 poolExecutor.submit(LooperRetryRequestRunnable())
-                initLog()
             }
         }
     }
 
-    private fun initLog() {
-        Logger.init()
-        Logger.addLogFile(logTag)
-
-    }
 
     /**
      * 取出元素 删除记录
@@ -241,7 +238,7 @@ class RequestRetry private constructor() : INetworkListener {
                     mRecordMap.remove(retryBean)
                     retryBean
                 } else {
-                    Logger.otherTagLog("数据未存在插入信息队列中或取出在插入之前", retryBean.toString(), logTag)
+                    _RetryLogger.retry("数据未存在插入信息队列中或取出在插入之前:$retryBean")
                     retryBean
                 }
             }

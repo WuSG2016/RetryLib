@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -35,7 +36,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation 'com.github.WuSG2016:ULog:1.2'
+    implementation 'com.github.WuSG2016.Ulog:annotation:1.5'
+    implementation 'com.github.WuSG2016.Ulog:common:1.5'
+    kapt 'com.github.WuSG2016.Ulog:compiler:1.5'
 }
 repositories {
     mavenCentral()
